@@ -19,17 +19,15 @@
  */
 package com.sonarsource.it.scm;
 
-import com.sonar.orchestrator.Orchestrator;
-import com.sonar.orchestrator.build.MavenBuild;
-import com.sonar.orchestrator.locator.FileLocation;
-import com.sonar.orchestrator.locator.MavenLocation;
-import com.sonar.orchestrator.util.ZipUtils;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -39,11 +37,16 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.sonar.wsclient.jsonsimple.JSONArray;
-import org.sonar.wsclient.jsonsimple.JSONObject;
-import org.sonar.wsclient.jsonsimple.JSONValue;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.build.MavenBuild;
+import com.sonar.orchestrator.locator.FileLocation;
+import com.sonar.orchestrator.locator.MavenLocation;
+import com.sonar.orchestrator.util.ZipUtils;
 
 public class MercurialTest {
 
@@ -52,9 +55,9 @@ public class MercurialTest {
 
   @ClassRule
   public static Orchestrator orchestrator = Orchestrator.builderEnv()
-    .setSonarVersion(System.getProperty("sonar.runtimeVersion", "LATEST_RELEASE[6.7]"))
+    .setSonarVersion(System.getProperty("sonar.runtimeVersion", "LATEST_RELEASE[7.9]"))
     .addPlugin(FileLocation.byWildcardMavenFilename(new File("../sonar-scm-mercurial-plugin/target"), "sonar-scm-mercurial-plugin-*.jar"))
-    .addPlugin(MavenLocation.of("org.sonarsource.java", "sonar-java-plugin", "LATEST_RELEASE"))
+    .addPlugin(MavenLocation.of("org.sonarsource.java", "sonar-java-plugin", "7.3.0.27589"))
     .build();
 
   @Test
@@ -73,6 +76,28 @@ public class MercurialTest {
         MapEntry.entry(1, new LineData("f553ba9f524c", "2012-07-18T18:26:11+0200", "david@gageot.net")),
         MapEntry.entry(2, new LineData("f553ba9f524c", "2012-07-18T18:26:11+0200", "david@gageot.net")),
         MapEntry.entry(3, new LineData("f553ba9f524c", "2012-07-18T18:26:11+0200", "david@gageot.net")));
+  }
+
+  @Test
+  public void testRevisionId() throws Exception {
+    File projectDir = temp.newFolder();
+    ZipUtils.unzip(new File("scm-repo/dummy-hg.zip"), projectDir);
+    File pom = new File(projectDir, "dummy-hg/pom.xml");
+    MavenBuild sonar = MavenBuild.create(pom)
+      .setGoals("verify sonar:sonar")
+      .setProperty("sonar.scm.disabled", "false");
+    orchestrator.executeBuilds(sonar);
+
+    String json = orchestrator.getServer()
+      .newHttpCall("api/project_analyses/search")
+      .setParam("commits_by_line", "true")
+      .setParam("project", "dummy-hg:dummy")
+      .execute()
+      .getBodyAsString();
+    JsonObject obj = Json.parse(json).asObject();
+    JsonArray analyses = obj.get("analyses").asArray();
+    String revisionId = analyses.get(0).asObject().get("revision").asString();
+    assertThat(revisionId).isEqualTo("6e55c56288ce");
   }
 
   private static final SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -112,14 +137,14 @@ public class MercurialTest {
       .setParam("key", fileKey)
       .execute()
       .getBodyAsString();
-    JSONObject obj = (JSONObject) JSONValue.parse(json);
-    JSONArray array = (JSONArray) obj.get("scm");
+    JsonValue obj = Json.parse(json);
+    JsonArray array = obj.asObject().get("scm").asArray();
     for (int i = 0; i < array.size(); i++) {
-      JSONArray item = (JSONArray) array.get(i);
+      JsonArray item = array.get(i).asArray();
       // Time part was added in 5.2
-      String dateOrDatetime = (String) item.get(2);
+      String dateOrDatetime = (String) item.get(2).asString();
       // Revision was added in 5.2
-      result.put(((Long) item.get(0)).intValue(), new LineData((String) item.get(3), dateOrDatetime, (String) item.get(1)));
+      result.put(Integer.valueOf(item.get(0).asInt()), new LineData(item.get(3).asString(), dateOrDatetime, item.get(1).asString()));
     }
     return result;
   }

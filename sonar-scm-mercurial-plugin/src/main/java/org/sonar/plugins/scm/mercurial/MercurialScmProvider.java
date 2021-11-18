@@ -19,17 +19,35 @@
  */
 package org.sonar.plugins.scm.mercurial;
 
+import java.io.File;
+import java.nio.file.Path;
+
+import javax.annotation.CheckForNull;
+
 import org.sonar.api.batch.scm.BlameCommand;
 import org.sonar.api.batch.scm.ScmProvider;
+import org.sonar.api.utils.command.Command;
+import org.sonar.api.utils.command.CommandExecutor;
+import org.sonar.api.utils.command.StreamConsumer;
+import org.sonar.api.utils.command.StringStreamConsumer;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
-import java.io.File;
 
 public class MercurialScmProvider extends ScmProvider {
 
+  private static final Logger LOG = Loggers.get(MercurialScmProvider.class);
+
   private final MercurialBlameCommand blameCommand;
+  private final CommandExecutor commandExecutor;
 
   public MercurialScmProvider(MercurialBlameCommand blameCommand) {
+    this(CommandExecutor.create(), blameCommand);
+  }
+
+  MercurialScmProvider(CommandExecutor commandExecutor, MercurialBlameCommand blameCommand) {
     this.blameCommand = blameCommand;
+    this.commandExecutor = commandExecutor;
   }
 
   @Override
@@ -44,6 +62,38 @@ public class MercurialScmProvider extends ScmProvider {
 
   @Override
   public BlameCommand blameCommand() {
-    return this.blameCommand;
+    return blameCommand;
+  }
+
+  @Override
+  @CheckForNull
+  public String revisionId(Path path)
+  {
+    Command cl = createCommandLine(path.toFile());
+
+    StringStreamConsumer stdout = new StringStreamConsumer();
+    StringStreamConsumer stderr = new StringStreamConsumer();
+    int exitCode = execute(cl, stdout, stderr);
+    if (exitCode != 0)
+    {
+      LOG.debug("The mercurial id command [" + cl.toString() + "] failed: " + stderr.getOutput());
+      return null;
+    }
+    return stdout.getOutput();
+  }
+
+  private int execute(Command cl, StreamConsumer stdout, StreamConsumer stderr)
+  {
+    LOG.debug("Executing: " + cl);
+    return commandExecutor.execute(cl, stdout, stderr, -1);
+  }
+
+  private Command createCommandLine(File workingDirectory)
+  {
+    Command cl = Command.create("hg");
+    cl.setDirectory(workingDirectory);
+    cl.addArgument("id");
+    cl.addArgument("-i");
+    return cl;
   }
 }
