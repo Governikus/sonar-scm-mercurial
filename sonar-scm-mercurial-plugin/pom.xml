@@ -8,8 +8,8 @@
   </parent>
 
   <artifactId>sonar-scm-mercurial-plugin</artifactId>
-  
-  <name>SonarQube :: Plugins :: SCM :: Mercurial</name>  
+
+  <name>SonarQube :: Plugins :: SCM :: Mercurial</name>
   <packaging>sonar-plugin</packaging>
   <description>Mercurial SCM Provider</description>
   <url>http://redirect.sonarsource.com/plugins/scmmercurial.html</url>
@@ -61,7 +61,6 @@
       <plugin>
         <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
         <artifactId>sonar-packaging-maven-plugin</artifactId>
-        <version>1.18.0.372</version>
         <configuration>
           <pluginName>Mercurial</pluginName>
           <skipDependenciesPackaging>true</skipDependenciesPackaging>

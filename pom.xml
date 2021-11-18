@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.sonarsource.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>44</version>
+    <version>59.0.29</version>
     <relativePath />
   </parent>
   <groupId>org.sonarsource.scm.mercurial</groupId>
@@ -38,7 +38,7 @@
   </developers>
 
   <modules>
-    <module>sonar-scm-mercurial-plugin</module>    
+    <module>sonar-scm-mercurial-plugin</module>
   </modules>
 
   <scm>
@@ -47,20 +47,21 @@
     <url>https://github.com/SonarQubeCommunity/sonar-scm-mercurial</url>
     <tag>HEAD</tag>
   </scm>
-  
+
   <issueManagement>
     <system>GitHub Issues</system>
     <url>https://github.com/SonarQubeCommunity/sonar-scm-mercurial/issues</url>
   </issueManagement>
-  
+
   <ciManagement>
     <system>Travis</system>
     <url>https://travis-ci.org/SonarQubeCommunity/sonar-scm-mercurial/</url>
   </ciManagement>
 
   <properties>
-    <sonar.buildVersion>6.7</sonar.buildVersion>
+    <sonar.buildVersion>7.9</sonar.buildVersion>
     <gitRepositoryName>sonar-scm-mercurial</gitRepositoryName>
+    <license.skip>true</license.skip>
   </properties>
 
   <profiles>
