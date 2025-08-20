@@ -31,7 +31,7 @@ import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.scm.BlameCommand;
 import org.sonar.api.batch.scm.BlameLine;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.command.CommandExecutor;
 import org.sonar.api.utils.command.StreamConsumer;
@@ -43,15 +43,15 @@ public class MercurialBlameCommand extends BlameCommand {
 
   private static final Logger LOG = Loggers.get(MercurialBlameCommand.class);
   private final CommandExecutor commandExecutor;
-  private Settings settings;
+  private Configuration config;
 
-  public MercurialBlameCommand(Settings settings) {
-    this(CommandExecutor.create(), settings);
+  public MercurialBlameCommand(Configuration config) {
+    this(CommandExecutor.create(), config);
   }
 
-  MercurialBlameCommand(CommandExecutor commandExecutor, Settings settings) {
+  MercurialBlameCommand(CommandExecutor commandExecutor, Configuration config) {
     this.commandExecutor = commandExecutor;
-    this.settings = settings;
+    this.config = config;
   }
 
   @Override
@@ -116,7 +116,7 @@ public class MercurialBlameCommand extends BlameCommand {
     cl.setDirectory(workingDirectory);
     cl.addArgument("blame");
     // Hack to support Mercurial prior to 2.1
-    if (!settings.getBoolean("sonar.mercurial.considerWhitespaces")) {
+    if (!config.getBoolean("sonar.mercurial.considerWhitespaces").orElse(false)) {
       // Ignore whitespaces
       cl.addArgument("-w");
     }

@@ -36,7 +36,7 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.scm.BlameCommand.BlameInput;
 import org.sonar.api.batch.scm.BlameCommand.BlameOutput;
 import org.sonar.api.batch.scm.BlameLine;
-import org.sonar.api.config.internal.MapSettings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.DateUtils;
 import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.command.CommandExecutor;
@@ -97,7 +97,7 @@ public class MercurialBlameCommandTest {
     });
 
     when(input.filesToBlame()).thenReturn(singletonList(inputFile));
-    new MercurialBlameCommand(commandExecutor, new MapSettings()).blame(input, result);
+    new MercurialBlameCommand(commandExecutor, mock(Configuration.class)).blame(input, result);
     verify(result).blameResult(inputFile,
       Arrays.asList(new BlameLine().date(DateUtils.parseDateTime("2014-11-04T11:01:10+0100")).revision("d45dafac0d9a").author("julien.henry@sonarsource.com"),
         new BlameLine().date(DateUtils.parseDateTime("2014-11-04T11:01:10+0100")).revision("d45dafac0d9a").author("julien.henry@sonarsource.com"),
@@ -130,7 +130,7 @@ public class MercurialBlameCommandTest {
     });
 
     when(input.filesToBlame()).thenReturn(singletonList(inputFile));
-    new MercurialBlameCommand(commandExecutor, new MapSettings()).blame(input, result);
+    new MercurialBlameCommand(commandExecutor, mock(Configuration.class)).blame(input, result);
     verify(result).blameResult(inputFile,
       Arrays.asList(new BlameLine().date(DateUtils.parseDateTime("2014-11-04T11:01:10+0100")).revision("d45dafac0d9a").author("julien.henry@sonarsource.com"),
         new BlameLine().date(DateUtils.parseDateTime("2014-11-04T11:01:10+0100")).revision("d45dafac0d9a").author("julien.henry@sonarsource.com"),
@@ -157,7 +157,7 @@ public class MercurialBlameCommandTest {
     });
 
     when(input.filesToBlame()).thenReturn(singletonList(inputFile));
-    new MercurialBlameCommand(commandExecutor, new MapSettings()).blame(input, result);
+    new MercurialBlameCommand(commandExecutor, mock(Configuration.class)).blame(input, result);
 
     // TODO assert log contains
     // "The mercurial blame command [hg blame -w -v --user --date --changeset src/foo.xoo] failed: abandon : src/foo.xoo: no such file in
@@ -186,7 +186,7 @@ public class MercurialBlameCommandTest {
 
     when(input.filesToBlame()).thenReturn(singletonList(inputFile));
 
-    new MercurialBlameCommand(commandExecutor, new MapSettings())
+    new MercurialBlameCommand(commandExecutor, mock(Configuration.class))
       .blame(input, result);
 
     assertThat(commandCaptor.getValue().getArguments())
