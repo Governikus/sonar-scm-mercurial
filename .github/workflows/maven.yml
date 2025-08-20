@@ -22,5 +22,10 @@ jobs:
         cache: maven
     - name: Build
       run: mvn -B package
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v4
+      with:
+        name: plugin
+        path: '**/target/sonar*.jar'
     - name: Update dependency graph
       uses: advanced-security/maven-dependency-submission-action@v5
