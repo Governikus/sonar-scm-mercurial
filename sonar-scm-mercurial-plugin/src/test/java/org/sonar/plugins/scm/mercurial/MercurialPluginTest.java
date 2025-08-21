@@ -33,7 +33,7 @@ public class MercurialPluginTest {
 
   @Test
   public void getExtensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(13, 0), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
 
     new MercurialPlugin().define(context);
