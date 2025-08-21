@@ -24,19 +24,19 @@ import java.nio.file.Path;
 
 import javax.annotation.CheckForNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.scm.BlameCommand;
 import org.sonar.api.batch.scm.ScmProvider;
 import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.command.CommandExecutor;
 import org.sonar.api.utils.command.StreamConsumer;
 import org.sonar.api.utils.command.StringStreamConsumer;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
 
 
 public class MercurialScmProvider extends ScmProvider {
 
-  private static final Logger LOG = Loggers.get(MercurialScmProvider.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MercurialScmProvider.class);
 
   private final MercurialBlameCommand blameCommand;
   private final CommandExecutor commandExecutor;
