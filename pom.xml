@@ -59,7 +59,6 @@
   </ciManagement>
 
   <properties>
-    <sonar.buildVersion>7.9</sonar.buildVersion>
     <gitRepositoryName>sonar-scm-mercurial</gitRepositoryName>
     <license.skip>true</license.skip>
   </properties>
