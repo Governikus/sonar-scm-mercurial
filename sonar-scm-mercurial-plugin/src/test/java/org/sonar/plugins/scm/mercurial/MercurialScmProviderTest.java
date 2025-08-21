@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import static org.apache.commons.io.FileUtils.forceMkdir;
@@ -34,8 +33,6 @@ public class MercurialScmProviderTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void sanityCheck() {

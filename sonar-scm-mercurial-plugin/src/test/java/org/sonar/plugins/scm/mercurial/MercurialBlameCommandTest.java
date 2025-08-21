@@ -26,7 +26,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
@@ -56,9 +55,6 @@ public class MercurialBlameCommandTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   private DefaultFileSystem fs;
   private File baseDir;
