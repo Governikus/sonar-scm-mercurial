@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MercurialPluginTest {
 
   @Test
+  @SuppressWarnings("unchecked")
   public void getExtensions() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(13, 0), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
