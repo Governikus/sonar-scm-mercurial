@@ -21,6 +21,7 @@ package org.sonar.plugins.scm.mercurial;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -71,7 +72,7 @@ public class MercurialBlameCommandTest {
   @Test
   public void testParsingOfOutput() throws IOException {
     File source = new File(baseDir, "src/foo.xoo");
-    FileUtils.write(source, "sample content");
+    FileUtils.write(source, "sample content", StandardCharsets.UTF_8);
     InputFile inputFile = new TestInputFileBuilder("foo", "src/foo.xoo")
       .setLines(3)
       .setModuleBaseDir(baseDir.toPath())
@@ -106,7 +107,7 @@ public class MercurialBlameCommandTest {
   @Test
   public void testAddMissingLastLine() throws IOException {
     File source = new File(baseDir, "src/foo.xoo");
-    FileUtils.write(source, "sample content");
+    FileUtils.write(source, "sample content", StandardCharsets.UTF_8);
     InputFile inputFile = new TestInputFileBuilder("foo", "src/foo.xoo")
       .setLines(4)
       .setModuleBaseDir(baseDir.toPath())
@@ -137,7 +138,7 @@ public class MercurialBlameCommandTest {
   @Test
   public void shouldNotFailOnFileUncommitted() throws IOException {
     File source = new File(baseDir, "src/foo.xoo");
-    FileUtils.write(source, "sample content");
+    FileUtils.write(source, "sample content", StandardCharsets.UTF_8);
     InputFile inputFile = new TestInputFileBuilder("foo", "src/foo.xoo")
       .setModuleBaseDir(baseDir.toPath())
       .build();
@@ -163,7 +164,7 @@ public class MercurialBlameCommandTest {
   @Test
   public void shouldProcessMaliciousFileBlockingAttack() throws IOException {
     File source = new File(baseDir, MALICIOUS_FILENAME);
-    FileUtils.write(source, "sample content");
+    FileUtils.write(source, "sample content", StandardCharsets.UTF_8);
     InputFile inputFile = new TestInputFileBuilder("foo", MALICIOUS_FILENAME)
       .setLines(3)
       .setModuleBaseDir(baseDir.toPath())
