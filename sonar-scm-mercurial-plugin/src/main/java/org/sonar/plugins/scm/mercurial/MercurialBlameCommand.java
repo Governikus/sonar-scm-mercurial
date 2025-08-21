@@ -88,7 +88,7 @@ public class MercurialBlameCommand extends BlameCommand {
   }
 
   private void blame(FileSystem fs, InputFile inputFile, BlameOutput output) {
-    String filename = inputFile.relativePath();
+    String filename = inputFile.filename();
     Command cl = createCommandLine(fs.baseDir(), filename);
     MercurialBlameConsumer consumer = new MercurialBlameConsumer(filename);
     StringStreamConsumer stderr = new StringStreamConsumer();
